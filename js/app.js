@@ -1,0 +1,10 @@
+const taskInput=document.getElementById('taskInput');const addBtn=document.getElementById('addBtn');const taskList=document.getElementById('taskList');document.addEventListener('DOMContentLoaded',loadTasks);addBtn.addEventListener('click',addTask);taskInput.addEventListener('keypress',function(e){if(e.key==='Enter'){addTask()}});function addTask(){const taskText=taskInput.value.trim();if(taskText===''){alert('Por favor, escribe una tarea válida.');return}
+const task={id:Date.now(),text:taskText,completed:!1};createTaskElement(task);saveTaskToLocalStorage(task);taskInput.value=''}
+function createTaskElement(task){const li=document.createElement('li');li.className=`task-item ${task.completed ? 'completed' : ''}`;li.dataset.id=task.id;const span=document.createElement('span');span.textContent=task.text;span.addEventListener('click',()=>toggleComplete(task.id));const deleteBtn=document.createElement('button');deleteBtn.textContent='Eliminar';deleteBtn.className='delete-btn';deleteBtn.addEventListener('click',()=>deleteTask(task.id));li.appendChild(span);li.appendChild(deleteBtn);taskList.appendChild(li)}
+function toggleComplete(id){let tasks=getTasksFromLocalStorage();tasks=tasks.map(task=>{if(task.id===id){task.completed=!task.completed}
+return task});localStorage.setItem('tasks',JSON.stringify(tasks));renderTasks()}
+function deleteTask(id){let tasks=getTasksFromLocalStorage();tasks=tasks.filter(task=>task.id!==id);localStorage.setItem('tasks',JSON.stringify(tasks));renderTasks()}
+function saveTaskToLocalStorage(newTask){const tasks=getTasksFromLocalStorage();tasks.push(newTask);localStorage.setItem('tasks',JSON.stringify(tasks))}
+function getTasksFromLocalStorage(){const tasksStr=localStorage.getItem('tasks');return tasksStr?JSON.parse(tasksStr):[]}
+function loadTasks(){renderTasks()}
+function renderTasks(){taskList.innerHTML='';const tasks=getTasksFromLocalStorage();tasks.forEach(task=>createTaskElement(task))}
